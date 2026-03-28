@@ -1,0 +1,5 @@
+{
+  "name": "jdk-auto-switch",
+  "version": "0.1.0",
+  "description": "Injects project-matching JDK env for Bash commands in Maven projects."
+}

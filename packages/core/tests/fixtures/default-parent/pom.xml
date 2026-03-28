@@ -1,0 +1,19 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>default-parent</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <maven.compiler.release>19</maven.compiler.release>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>19</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
