@@ -130,4 +130,99 @@ describe('readPomSignals', () => {
 
     expect(result).toEqual([])
   })
+
+  it('resolves same-file and chained property interpolation for supported fields', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-pom')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven.compiler.release',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven.compiler.source',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven.compiler.target',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:release',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:source',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:target',
+    })
+  })
+
+  it('resolves child plugin configuration from local parent properties', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-parent', 'child')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:source',
+    })
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:target',
+    })
+  })
+
+  it('resolves default-parent property interpolation when relativePath is omitted', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-default-parent', 'child')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toContainEqual({
+      major: 19,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:release',
+    })
+  })
+
+  it('ignores unresolved property references', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-unresolved-all')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toEqual([])
+  })
+
+  it('ignores cyclic property references without hanging', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-cycle')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toEqual([])
+  })
+
+  it('keeps valid supported fields when another interpolated field is unresolved', async () => {
+    const projectRoot = path.join(fixturesDir, 'interpolated-unresolved')
+    const result = await readPomSignals(projectRoot)
+
+    expect(result).toContainEqual({
+      major: 21,
+      source: 'maven',
+      detail: 'maven-compiler-plugin:target',
+    })
+    expect(result).toHaveLength(1)
+  })
 })

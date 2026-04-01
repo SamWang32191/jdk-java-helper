@@ -4,6 +4,30 @@ import { XMLParser } from 'fast-xml-parser'
 import type { VersionSignal } from '../types.js'
 
 const parser = new XMLParser({ ignoreAttributes: false })
+const propertyReferencePattern = /\$\{([^}]+)\}/g
+const maxInterpolationDepth = 10
+
+interface MavenPlugin {
+  artifactId?: unknown
+  configuration?: Record<string, unknown>
+}
+
+interface MavenProject {
+  parent?: {
+    relativePath?: unknown
+  }
+  properties?: Record<string, unknown>
+  build?: {
+    plugins?: {
+      plugin?: MavenPlugin[] | MavenPlugin
+    }
+    pluginManagement?: {
+      plugins?: {
+        plugin?: MavenPlugin[] | MavenPlugin
+      }
+    }
+  }
+}
 
 function parseMajor(value: unknown): number | null {
   if (typeof value === 'number' && Number.isInteger(value)) {
@@ -30,25 +54,72 @@ function asArray<T>(value: T | T[] | undefined): T[] {
   return Array.isArray(value) ? value : [value]
 }
 
-function readSignalsFromPom(pom: unknown, detailPrefix = ''): VersionSignal[] {
-  if (!pom || typeof pom !== 'object') {
-    return []
+function extractProperties(project: MavenProject): Record<string, unknown> {
+  return project.properties ?? {}
+}
+
+function resolvePropertyValue(
+  value: unknown,
+  properties: Record<string, unknown>,
+  visited = new Set<string>(),
+  depth = 0,
+): string | null {
+  if (typeof value === 'number' && Number.isInteger(value)) {
+    return String(value)
   }
 
-  const project = pom as {
-    properties?: Record<string, unknown>
-    build?: {
-      plugins?: {
-        plugin?: Array<{ artifactId?: unknown; configuration?: Record<string, unknown> }> | { artifactId?: unknown; configuration?: Record<string, unknown> }
-      }
-      pluginManagement?: {
-        plugins?: {
-          plugin?: Array<{ artifactId?: unknown; configuration?: Record<string, unknown> }> | { artifactId?: unknown; configuration?: Record<string, unknown> }
-        }
-      }
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  if (depth > maxInterpolationDepth) {
+    return null
+  }
+
+  const trimmed = value.trim()
+  if (!trimmed.includes('${')) {
+    return trimmed
+  }
+
+  let unresolved = false
+  const resolved = trimmed.replace(propertyReferencePattern, (_match, rawPropertyName: string) => {
+    const propertyName = rawPropertyName.trim()
+    if (propertyName.length === 0 || visited.has(propertyName)) {
+      unresolved = true
+      return ''
     }
+
+    const propertyValue = properties[propertyName]
+    if (propertyValue === undefined) {
+      unresolved = true
+      return ''
+    }
+
+    const nextVisited = new Set(visited)
+    nextVisited.add(propertyName)
+    const nested = resolvePropertyValue(propertyValue, properties, nextVisited, depth + 1)
+    if (nested === null) {
+      unresolved = true
+      return ''
+    }
+
+    return nested
+  })
+
+  return unresolved ? null : resolved
+}
+
+function parseResolvedMajor(value: unknown, properties: Record<string, unknown>): number | null {
+  const resolved = resolvePropertyValue(value, properties)
+  if (resolved === null) {
+    return null
   }
 
+  return parseMajor(resolved)
+}
+
+function readSignalsFromPom(project: MavenProject, properties: Record<string, unknown>, detailPrefix = ''): VersionSignal[] {
+  
   const signals: VersionSignal[] = []
   const propertySignals = [
     ['maven.compiler.release', 'maven.compiler.release'],
@@ -57,7 +128,7 @@ function readSignalsFromPom(pom: unknown, detailPrefix = ''): VersionSignal[] {
   ] as const
 
   for (const [propertyName, detail] of propertySignals) {
-    const major = parseMajor(project.properties?.[propertyName])
+    const major = parseResolvedMajor(project.properties?.[propertyName], properties)
     if (major !== null) {
       signals.push({ major, source: 'maven', detail: `${detailPrefix}${detail}` })
     }
@@ -70,17 +141,17 @@ function readSignalsFromPom(pom: unknown, detailPrefix = ''): VersionSignal[] {
         continue
       }
 
-      const release = parseMajor(plugin.configuration?.release)
+      const release = parseResolvedMajor(plugin.configuration?.release, properties)
       if (release !== null) {
         signals.push({ major: release, source: 'maven', detail: `${detailPrefix}maven-compiler-plugin:release` })
       }
 
-      const source = parseMajor(plugin.configuration?.source)
+      const source = parseResolvedMajor(plugin.configuration?.source, properties)
       if (source !== null) {
         signals.push({ major: source, source: 'maven', detail: `${detailPrefix}maven-compiler-plugin:source` })
       }
 
-      const target = parseMajor(plugin.configuration?.target)
+      const target = parseResolvedMajor(plugin.configuration?.target, properties)
       if (target !== null) {
         signals.push({ major: target, source: 'maven', detail: `${detailPrefix}maven-compiler-plugin:target` })
       }
@@ -99,38 +170,50 @@ export async function readPomSignals(projectRoot: string): Promise<VersionSignal
   const pomPath = path.join(projectRoot, 'pom.xml')
   const project = await readPomObject(pomPath)
 
-  const signals = readSignalsFromPom(project)
-
   if (!project || typeof project !== 'object') {
-    return signals
+    return []
   }
 
-  const parent = (project as { parent?: { relativePath?: unknown } }).parent
-  if (!parent) {
-    return signals
-  }
+  const projectObject = project as MavenProject
+  const projectProperties = extractProperties(projectObject)
+  let parentProject: MavenProject | null = null
+  let parentProperties: Record<string, unknown> = {}
 
-  const parentRelativePath = parent.relativePath
-  if (parentRelativePath === '') {
-    return signals
-  }
-
-  const resolvedParentRelativePath = typeof parentRelativePath === 'string' ? parentRelativePath.trim() : '../pom.xml'
-  if (resolvedParentRelativePath.length === 0) {
-    return signals
-  }
-
-  const parentPomPath = path.resolve(projectRoot, resolvedParentRelativePath)
-  try {
-    const parentStat = await fs.stat(parentPomPath)
-    const resolvedParentPomPath = parentStat.isDirectory() ? path.join(parentPomPath, 'pom.xml') : parentPomPath
-    const parent = await readPomObject(resolvedParentPomPath)
-    signals.push(...readSignalsFromPom(parent, 'parent:'))
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      throw error
+  const parent = projectObject.parent
+  if (parent) {
+    const parentRelativePath = parent.relativePath
+    if (parentRelativePath !== '') {
+      const resolvedParentRelativePath = typeof parentRelativePath === 'string' ? parentRelativePath.trim() : '../pom.xml'
+      if (resolvedParentRelativePath.length > 0) {
+        const parentPomPath = path.resolve(projectRoot, resolvedParentRelativePath)
+        try {
+          const parentStat = await fs.stat(parentPomPath)
+          const resolvedParentPomPath = parentStat.isDirectory() ? path.join(parentPomPath, 'pom.xml') : parentPomPath
+          const loadedParent = await readPomObject(resolvedParentPomPath)
+          if (loadedParent && typeof loadedParent === 'object') {
+            parentProject = loadedParent as MavenProject
+            parentProperties = extractProperties(parentProject)
+          }
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+            throw error
+          }
+        }
+      }
     }
   }
+
+  const mergedProperties = {
+    ...parentProperties,
+    ...projectProperties,
+  }
+  const signals = readSignalsFromPom(projectObject, mergedProperties)
+
+  if (!parentProject) {
+    return signals
+  }
+
+  signals.push(...readSignalsFromPom(parentProject, parentProperties, 'parent:'))
 
   return signals
 }

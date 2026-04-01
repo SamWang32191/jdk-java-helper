@@ -1,0 +1,22 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.demo</groupId>
+    <artifactId>interpolated-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>child</artifactId>
+  <version>1.0.0</version>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

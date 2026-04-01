@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>interpolated-cycle</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <java.version>${compiler.level}</java.version>
+    <compiler.level>${java.version}</compiler.level>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+  </properties>
+</project>

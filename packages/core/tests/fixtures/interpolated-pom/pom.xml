@@ -1,0 +1,25 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>interpolated</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <java.version>21</java.version>
+    <compiler.level>${java.version}</compiler.level>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <maven.compiler.source>${compiler.level}</maven.compiler.source>
+    <maven.compiler.target>${compiler.level}</maven.compiler.target>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
