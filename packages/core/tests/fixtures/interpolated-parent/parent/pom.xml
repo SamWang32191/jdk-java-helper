@@ -1,0 +1,9 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>interpolated-parent</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <java.version>21</java.version>
+  </properties>
+</project>

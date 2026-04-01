@@ -154,6 +154,133 @@ describe('resolveJdk', () => {
     expect(formatExplain(result)).toContain('Ignored sources: version-file, maven')
   })
 
+  it('resolves interpolated Maven signals when no higher-priority source exists', async () => {
+    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-pom')
+    const result = await resolveJdk({
+      cwd: projectRoot,
+      command: 'make test',
+      platform: 'darwin',
+      env: {},
+      inventory: [
+        {
+          major: 21,
+          fullVersion: '21.0.7',
+          javaHome: '/jdks/21',
+          javaBin: '/jdks/21/bin/java',
+          javacBin: '/jdks/21/bin/javac',
+          vendor: 'Temurin',
+          source: 'manual',
+          validated: true,
+          arch: 'arm64',
+        },
+      ],
+    })
+
+    expect(result.kind).toBe('resolved')
+    if (result.kind === 'resolved') {
+      expect(result.major).toBe(21)
+      expect(result.diagnostics.usedSources).toEqual(['maven'])
+    }
+  })
+
+  it('returns CONFLICT for interpolated Maven signals that resolve to different majors', async () => {
+    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-conflict')
+    const result = await resolveJdk({
+      cwd: projectRoot,
+      command: 'make test',
+      platform: 'darwin',
+      env: {},
+      inventory: [
+        {
+          major: 17,
+          fullVersion: '17.0.13',
+          javaHome: '/jdks/17',
+          javaBin: '/jdks/17/bin/java',
+          javacBin: '/jdks/17/bin/javac',
+          vendor: 'Temurin',
+          source: 'manual',
+          validated: true,
+          arch: 'arm64',
+        },
+        {
+          major: 21,
+          fullVersion: '21.0.7',
+          javaHome: '/jdks/21',
+          javaBin: '/jdks/21/bin/java',
+          javacBin: '/jdks/21/bin/javac',
+          vendor: 'Temurin',
+          source: 'manual',
+          validated: true,
+          arch: 'arm64',
+        },
+      ],
+    })
+
+    expect(result.kind).toBe('unresolved')
+    if (result.kind === 'unresolved') {
+      expect(result.code).toBe('CONFLICT')
+      expect(result.conflictFound).toEqual([17, 21])
+    }
+  })
+
+  it('keeps fail-soft NO_SIGNAL behavior for unresolved interpolated Maven references', async () => {
+    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-unresolved-all')
+    const result = await resolveJdk({
+      cwd: projectRoot,
+      command: 'make test',
+      platform: 'darwin',
+      env: {},
+      inventory: [
+        {
+          major: 21,
+          fullVersion: '21.0.7',
+          javaHome: '/jdks/21',
+          javaBin: '/jdks/21/bin/java',
+          javacBin: '/jdks/21/bin/javac',
+          vendor: 'Temurin',
+          source: 'manual',
+          validated: true,
+          arch: 'arm64',
+        },
+      ],
+    })
+
+    expect(result.kind).toBe('unresolved')
+    if (result.kind === 'unresolved') {
+      expect(result.code).toBe('NO_SIGNAL')
+      expect(result.sourcesExamined).toEqual(['command', 'version-file', 'maven'])
+    }
+  })
+
+  it('keeps fail-soft NO_SIGNAL behavior for cyclic interpolated Maven references', async () => {
+    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-cycle')
+    const result = await resolveJdk({
+      cwd: projectRoot,
+      command: 'make test',
+      platform: 'darwin',
+      env: {},
+      inventory: [
+        {
+          major: 21,
+          fullVersion: '21.0.7',
+          javaHome: '/jdks/21',
+          javaBin: '/jdks/21/bin/java',
+          javacBin: '/jdks/21/bin/javac',
+          vendor: 'Temurin',
+          source: 'manual',
+          validated: true,
+          arch: 'arm64',
+        },
+      ],
+    })
+
+    expect(result.kind).toBe('unresolved')
+    if (result.kind === 'unresolved') {
+      expect(result.code).toBe('NO_SIGNAL')
+      expect(result.sourcesExamined).toEqual(['command', 'version-file', 'maven'])
+    }
+  })
+
   it('formats doctor output with inventory and missing majors', () => {
     expect(
       formatDoctor({

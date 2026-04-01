@@ -1,0 +1,19 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>interpolated-unresolved-all</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <maven.compiler.release>${missing.version}</maven.compiler.release>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${missing.version}</source>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
