@@ -5,10 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.json",
     "test": "vitest run"
   },
   "dependencies": {
-    "@jdk-auto-switch/core": "workspace:*"
+    "@jdk-auto-switch/core": "0.1.0"
   }
 }
