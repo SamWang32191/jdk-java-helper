@@ -1,0 +1,14 @@
+{
+  "name": "@jdk-auto-switch/opencode-plugin",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@jdk-auto-switch/core": "0.1.0"
+  }
+}

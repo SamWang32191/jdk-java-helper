@@ -1,0 +1,9 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.demo</groupId>
+  <artifactId>upstream-parent</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <maven.compiler.release>25</maven.compiler.release>
+  </properties>
+</project>

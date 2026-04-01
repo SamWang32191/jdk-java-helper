@@ -72,7 +72,7 @@
 - Create: `packages/core/src/index.ts`
 - Test: `packages/core/tests/workspace-smoke.test.ts`
 
-- [ ] **Step 1: Write the failing smoke test**
+- [x] **Step 1: Write the failing smoke test**
 
 ```ts
 // packages/core/tests/workspace-smoke.test.ts
@@ -96,13 +96,13 @@ describe('workspace smoke test', () => {
 })
 ```
 
-- [ ] **Step 2: Run the smoke test and verify it fails**
+- [x] **Step 2: Run the smoke test and verify it fails**
 
 Run: `npm test -- --run packages/core/tests/workspace-smoke.test.ts`
 
 Expected: FAIL with module resolution errors because the workspace and `resolveJdk` do not exist yet.
 
-- [ ] **Step 3: Create the workspace manifests and minimal core entry**
+- [x] **Step 3: Create the workspace manifests and minimal core entry**
 
 ```json
 // package.json
@@ -226,13 +226,13 @@ export async function resolveJdk(input: ResolveInput): Promise<ResolveResult> {
 Shared core plus OpenCode and Claude Code adapters for command-scoped JDK switching in Maven projects.
 ```
 
-- [ ] **Step 4: Run the smoke test and verify it passes**
+- [x] **Step 4: Run the smoke test and verify it passes**
 
 Run: `npm test -- --run packages/core/tests/workspace-smoke.test.ts`
 
 Expected: PASS with 1 test passed.
 
-- [ ] **Step 5: Commit the workspace bootstrap**
+- [x] **Step 5: Commit the workspace bootstrap**
 
 ```bash
 git add package.json tsconfig.base.json vitest.config.ts README.md packages/core
@@ -252,7 +252,7 @@ git commit -m "chore: bootstrap workspace and core package"
 - Create: `packages/core/tests/fixtures/version-files/.tool-versions`
 - Create: `packages/core/tests/fixtures/version-files/.sdkmanrc`
 
-- [ ] **Step 1: Write the failing tests for command overrides and version files**
+- [x] **Step 1: Write the failing tests for command overrides and version files**
 
 ```ts
 // packages/core/tests/parse-command-signals.test.ts
@@ -315,13 +315,13 @@ java 21.0.7-tem
 java=25-tem
 ```
 
-- [ ] **Step 2: Run the tests and verify they fail**
+- [x] **Step 2: Run the tests and verify they fail**
 
 Run: `npm test -- --run packages/core/tests/parse-command-signals.test.ts packages/core/tests/read-version-files.test.ts`
 
 Expected: FAIL because `parseCommandSignals` and `readVersionFiles` do not exist.
 
-- [ ] **Step 3: Implement the signal types and parsers**
+- [x] **Step 3: Implement the signal types and parsers**
 
 ```ts
 // packages/core/src/types.ts
@@ -450,13 +450,13 @@ export { parseCommandSignals } from './signals/parse-command-signals.js'
 export { readVersionFiles } from './signals/read-version-files.js'
 ```
 
-- [ ] **Step 4: Run the parser tests and verify they pass**
+- [x] **Step 4: Run the parser tests and verify they pass**
 
 Run: `npm test -- --run packages/core/tests/parse-command-signals.test.ts packages/core/tests/read-version-files.test.ts`
 
 Expected: PASS with 5 tests passed.
 
-- [ ] **Step 5: Commit the explicit-signal parsers**
+- [x] **Step 5: Commit the explicit-signal parsers**
 
 ```bash
 git add packages/core/src/signals packages/core/src/types.ts packages/core/src/index.ts packages/core/tests
@@ -473,7 +473,7 @@ git commit -m "feat: parse command and repo version signals"
 - Create: `packages/core/tests/fixtures/multi-module/pom.xml`
 - Create: `packages/core/tests/fixtures/multi-module/parent/pom.xml`
 
-- [ ] **Step 1: Write the failing tests for static Maven parsing**
+- [x] **Step 1: Write the failing tests for static Maven parsing**
 
 ```ts
 // packages/core/tests/read-pom-signals.test.ts
@@ -547,13 +547,13 @@ describe('readPomSignals', () => {
 </project>
 ```
 
-- [ ] **Step 2: Run the Maven parser tests and verify they fail**
+- [x] **Step 2: Run the Maven parser tests and verify they fail**
 
 Run: `npm test -- --run packages/core/tests/read-pom-signals.test.ts`
 
 Expected: FAIL because `readPomSignals` and XML parsing dependencies do not exist.
 
-- [ ] **Step 3: Add XML parsing dependency and implement static Maven parsing**
+- [x] **Step 3: Add XML parsing dependency and implement static Maven parsing**
 
 ```json
 // packages/core/package.json
@@ -637,13 +637,13 @@ export async function readPomSignals(projectRoot: string): Promise<VersionSignal
 }
 ```
 
-- [ ] **Step 4: Run the Maven parser tests and verify they pass**
+- [x] **Step 4: Run the Maven parser tests and verify they pass**
 
 Run: `npm test -- --run packages/core/tests/read-pom-signals.test.ts`
 
 Expected: PASS with 2 tests passed.
 
-- [ ] **Step 5: Commit the Maven parser**
+- [x] **Step 5: Commit the Maven parser**
 
 ```bash
 git add packages/core/package.json packages/core/src/signals/read-pom-signals.ts packages/core/tests
@@ -660,7 +660,7 @@ git commit -m "feat: add static maven signal parsing"
 - Modify: `packages/core/src/types.ts`
 - Test: `packages/core/tests/discover-candidates.test.ts`
 
-- [ ] **Step 1: Write the failing inventory tests**
+- [x] **Step 1: Write the failing inventory tests**
 
 ```ts
 // packages/core/tests/discover-candidates.test.ts
@@ -677,13 +677,13 @@ describe('normalizeCandidate', () => {
 })
 ```
 
-- [ ] **Step 2: Run the inventory tests and verify they fail**
+- [x] **Step 2: Run the inventory tests and verify they fail**
 
 Run: `npm test -- --run packages/core/tests/discover-candidates.test.ts`
 
 Expected: FAIL because inventory modules do not exist.
 
-- [ ] **Step 3: Implement candidate discovery and validation helpers**
+- [x] **Step 3: Implement candidate discovery and validation helpers**
 
 ```ts
 // packages/core/src/types.ts
@@ -798,13 +798,13 @@ export async function discoverManagerHomes(homeDir: string): Promise<string[]> {
 }
 ```
 
-- [ ] **Step 4: Run the inventory tests and verify they pass**
+- [x] **Step 4: Run the inventory tests and verify they pass**
 
 Run: `npm test -- --run packages/core/tests/discover-candidates.test.ts`
 
 Expected: PASS with 1 test passed.
 
-- [ ] **Step 5: Commit the inventory discovery layer**
+- [x] **Step 5: Commit the inventory discovery layer**
 
 ```bash
 git add packages/core/src/inventory packages/core/src/types.ts packages/core/tests/discover-candidates.test.ts
@@ -822,7 +822,7 @@ git commit -m "feat: discover and normalize local jdk candidates"
 - Modify: `packages/core/src/types.ts`
 - Test: `packages/core/tests/resolve-jdk.test.ts`
 
-- [ ] **Step 1: Write the failing resolver tests**
+- [x] **Step 1: Write the failing resolver tests**
 
 ```ts
 // packages/core/tests/resolve-jdk.test.ts
@@ -853,13 +853,13 @@ describe('resolveJdk', () => {
 })
 ```
 
-- [ ] **Step 2: Run the resolver test and verify it fails**
+- [x] **Step 2: Run the resolver test and verify it fails**
 
 Run: `npm test -- --run packages/core/tests/resolve-jdk.test.ts`
 
 Expected: FAIL because resolver internals do not exist.
 
-- [ ] **Step 3: Implement project detection, resolution, and diagnostics**
+- [x] **Step 3: Implement project detection, resolution, and diagnostics**
 
 ```ts
 // packages/core/src/project/find-project-root.ts
@@ -1028,13 +1028,13 @@ export { formatExplain } from './diagnostics/format-explain.js'
 export { formatDoctor } from './diagnostics/format-doctor.js'
 ```
 
-- [ ] **Step 4: Run the resolver test and verify it passes**
+- [x] **Step 4: Run the resolver test and verify it passes**
 
 Run: `npm test -- --run packages/core/tests/resolve-jdk.test.ts`
 
 Expected: PASS with 1 test passed.
 
-- [ ] **Step 5: Commit the resolver and diagnostics**
+- [x] **Step 5: Commit the resolver and diagnostics**
 
 ```bash
 git add packages/core/src/project packages/core/src/resolver packages/core/src/diagnostics packages/core/src/index.ts packages/core/src/types.ts packages/core/tests/resolve-jdk.test.ts
@@ -1048,7 +1048,7 @@ git commit -m "feat: resolve jdk from explicit project signals"
 - Create: `packages/opencode-plugin/src/index.ts`
 - Create: `packages/opencode-plugin/tests/opencode-plugin.test.ts`
 
-- [ ] **Step 1: Write the failing adapter test**
+- [x] **Step 1: Write the failing adapter test**
 
 ```ts
 // packages/opencode-plugin/tests/opencode-plugin.test.ts
@@ -1074,13 +1074,13 @@ describe('OpenCode plugin', () => {
 })
 ```
 
-- [ ] **Step 2: Run the adapter test and verify it fails**
+- [x] **Step 2: Run the adapter test and verify it fails**
 
 Run: `npm test -- --run packages/opencode-plugin/tests/opencode-plugin.test.ts`
 
 Expected: FAIL because the OpenCode adapter package does not exist.
 
-- [ ] **Step 3: Implement the OpenCode plugin**
+- [x] **Step 3: Implement the OpenCode plugin**
 
 ```json
 // packages/opencode-plugin/package.json
@@ -1137,13 +1137,13 @@ export async function createOpenCodePlugin(resolver: ResolverLike = { resolve: r
 }
 ```
 
-- [ ] **Step 4: Run the OpenCode adapter test and verify it passes**
+- [x] **Step 4: Run the OpenCode adapter test and verify it passes**
 
 Run: `npm test -- --run packages/opencode-plugin/tests/opencode-plugin.test.ts`
 
 Expected: PASS with 1 test passed.
 
-- [ ] **Step 5: Commit the OpenCode adapter**
+- [x] **Step 5: Commit the OpenCode adapter**
 
 ```bash
 git add packages/opencode-plugin
@@ -1159,7 +1159,7 @@ git commit -m "feat: add opencode jdk injection plugin"
 - Create: `packages/claude-plugin/scripts/jdk-hook.mjs`
 - Create: `packages/claude-plugin/tests/claude-hook.test.ts`
 
-- [ ] **Step 1: Write the failing Claude hook test**
+- [x] **Step 1: Write the failing Claude hook test**
 
 ```ts
 // packages/claude-plugin/tests/claude-hook.test.ts
@@ -1187,13 +1187,13 @@ describe('Claude hook', () => {
 })
 ```
 
-- [ ] **Step 2: Run the Claude hook test and verify it fails**
+- [x] **Step 2: Run the Claude hook test and verify it fails**
 
 Run: `npm test -- --run packages/claude-plugin/tests/claude-hook.test.ts`
 
 Expected: FAIL because the Claude adapter package does not exist.
 
-- [ ] **Step 3: Implement the Claude plugin metadata, hook registration, and hook script**
+- [x] **Step 3: Implement the Claude plugin metadata, hook registration, and hook script**
 
 ```json
 // packages/claude-plugin/package.json
@@ -1267,13 +1267,13 @@ if (process.argv[1] && process.argv[1].endsWith('jdk-hook.mjs')) {
 }
 ```
 
-- [ ] **Step 4: Run the Claude hook test and verify it passes**
+- [x] **Step 4: Run the Claude hook test and verify it passes**
 
 Run: `npm test -- --run packages/claude-plugin/tests/claude-hook.test.ts`
 
 Expected: PASS with 1 test passed.
 
-- [ ] **Step 5: Commit the Claude adapter**
+- [x] **Step 5: Commit the Claude adapter**
 
 ```bash
 git add packages/claude-plugin
@@ -1288,7 +1288,7 @@ git commit -m "feat: add claude code jdk hook plugin"
 - Modify: `packages/core/package.json`
 - Test: `packages/core/tests/cli.test.ts`
 
-- [ ] **Step 1: Write the failing CLI test**
+- [x] **Step 1: Write the failing CLI test**
 
 ```ts
 // packages/core/tests/cli.test.ts
@@ -1311,13 +1311,13 @@ describe('runCli', () => {
 })
 ```
 
-- [ ] **Step 2: Run the CLI test and verify it fails**
+- [x] **Step 2: Run the CLI test and verify it fails**
 
 Run: `npm test -- --run packages/core/tests/cli.test.ts`
 
 Expected: FAIL because the CLI entry does not exist.
 
-- [ ] **Step 3: Implement the CLI entry and update docs**
+- [x] **Step 3: Implement the CLI entry and update docs**
 
 ```ts
 // packages/core/src/cli.ts
@@ -1381,7 +1381,7 @@ npx jdk-auto-switch explain --cwd /path/to/project --command "make JAVA=17 test"
 ~~~
 ```
 
-- [ ] **Step 4: Run the CLI test plus full verification**
+- [x] **Step 4: Run the CLI test plus full verification**
 
 Run: `npm test && npm run build`
 
@@ -1389,7 +1389,7 @@ Expected:
 - all Vitest suites PASS
 - build emits workspace dist files without TypeScript errors
 
-- [ ] **Step 5: Commit the CLI and docs**
+- [x] **Step 5: Commit the CLI and docs**
 
 ```bash
 git add README.md packages/core/src/cli.ts packages/core/package.json packages/core/tests/cli.test.ts

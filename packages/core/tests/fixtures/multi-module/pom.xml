@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.demo</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>child</artifactId>
+  <version>1.0.0</version>
+</project>
