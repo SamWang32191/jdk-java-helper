@@ -4,9 +4,41 @@ Shared core plus OpenCode and Claude Code adapters for command-scoped JDK switch
 
 ## Packages
 
-- `@jdk-auto-switch/core` — resolver, diagnostics, CLI
-- `@jdk-auto-switch/opencode-plugin` — OpenCode adapter
-- `@jdk-auto-switch/claude-plugin` — Claude Code hook package
+- `@jdk-auto-switch/core` — public npm package for resolver logic, diagnostics, and CLI
+- `@jdk-auto-switch/opencode-plugin` — public npm package for the OpenCode adapter
+- `@jdk-auto-switch/claude-plugin` — internal package, gated from npm publication until its package contract is finished
+
+## npm release workflow
+
+Authenticate with npm first:
+
+```bash
+npm whoami
+```
+
+Validate the release set:
+
+```bash
+npm install
+npm run release:check
+```
+
+Rehearse the ordered publish flow without uploading:
+
+```bash
+npm run release:publish:dry-run
+```
+
+Publish the public packages in dependency order:
+
+```bash
+npm run release:publish
+```
+
+Current public release set:
+
+- `@jdk-auto-switch/core`
+- `@jdk-auto-switch/opencode-plugin`
 
 ## OpenCode plugin usage
 

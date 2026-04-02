@@ -1,7 +1,15 @@
 {
   "name": "@jdk-auto-switch/opencode-plugin",
   "version": "0.1.0",
+  "description": "OpenCode plugin for command-scoped JDK switching in Maven projects.",
+  "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
   "oc-plugin": [
     "server"
   ],
@@ -15,7 +23,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.json",
-    "test": "vitest run tests"
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run build && npm test && npm run pack:check",
+    "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
     "@jdk-auto-switch/core": "0.1.0",

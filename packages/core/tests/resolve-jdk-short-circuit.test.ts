@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('../src/signals/read-version-files.js', () => ({
@@ -17,7 +18,7 @@ import { resolveJdk } from '../src/index.js'
 
 describe('resolveJdk short-circuit', () => {
   it('does not read lower-priority sources when command override resolves', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/simple-pom')
+    const projectRoot = path.resolve(fileURLToPath(new URL('./fixtures/simple-pom', import.meta.url)))
 
     const result = await resolveJdk({
       cwd: projectRoot,

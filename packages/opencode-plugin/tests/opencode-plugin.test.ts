@@ -74,6 +74,14 @@ const createJdkNotFoundResult = () => ({
 } satisfies Extract<ResolveResult, { kind: 'unresolved' }>)
 
 describe('OpenCode npm plugin contract', () => {
+  it('uses a package-local vitest config so npm test works from the package directory', () => {
+    const packageJson = JSON.parse(readFileSync(opencodePackageJsonUrl, 'utf8')) as {
+      scripts?: { test?: string }
+    }
+
+    expect(packageJson.scripts?.test).toBe('vitest run --config vitest.config.ts')
+  })
+
   it('declares package exports for OpenCode loader discovery', () => {
     const packageJson = JSON.parse(
       readFileSync(opencodePackageJsonUrl, 'utf8'),

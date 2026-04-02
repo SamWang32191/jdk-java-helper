@@ -1,6 +1,7 @@
 {
   "name": "@jdk-auto-switch/claude-plugin",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "dependencies": {
     "@jdk-auto-switch/core": "0.1.0"

@@ -8,6 +8,8 @@ OpenCode plugin for command-scoped JDK switching in Maven projects.
 npm install @jdk-auto-switch/opencode-plugin
 ```
 
+This package is intended for npm-native OpenCode plugin installation.
+
 ## Configure `opencode.json`
 
 Add the package to `opencode.json`:
@@ -34,6 +36,7 @@ Run a command through OpenCode inside a Maven project that requires a specific J
 ## Notes
 
 - The loader contract is sensitive to the OpenCode version, so validate plugin loading against the target release.
+- The published package exposes the server plugin target through package metadata in `package.json`; keep your OpenCode version aligned with the documented loader behavior.
 - If your OpenCode setup still needs an explicit entry-file export path, use this as an advanced fallback:
 
 ```ts

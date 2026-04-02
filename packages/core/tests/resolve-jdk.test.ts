@@ -1,10 +1,13 @@
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { discoverInventory, formatDoctor, formatExplain, resolveJdk } from '../src/index.js'
 
+const fixturePath = (name: string) => path.resolve(fileURLToPath(new URL(`./fixtures/${name}`, import.meta.url)))
+
 describe('resolveJdk', () => {
   it('prefers exact command override over pom release', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/simple-pom')
+    const projectRoot = fixturePath('simple-pom')
 
     const result = await resolveJdk({
       cwd: projectRoot,
@@ -50,7 +53,7 @@ describe('resolveJdk', () => {
   })
 
   it('prefers validated candidate over source bucket when majors tie', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/simple-pom')
+    const projectRoot = fixturePath('simple-pom')
 
     const result = await resolveJdk({
       cwd: projectRoot,
@@ -94,7 +97,7 @@ describe('resolveJdk', () => {
   })
 
   it('returns fail-fast diagnostics when no exact JDK is installed', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/simple-pom')
+    const projectRoot = fixturePath('simple-pom')
 
     const result = await resolveJdk({
       cwd: projectRoot,
@@ -127,7 +130,7 @@ describe('resolveJdk', () => {
   })
 
   it('formats explain output with selection and ignored sources', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/simple-pom')
+    const projectRoot = fixturePath('simple-pom')
     const result = await resolveJdk({
       cwd: projectRoot,
       command: 'make JAVA=17 test',
@@ -155,7 +158,7 @@ describe('resolveJdk', () => {
   })
 
   it('resolves interpolated Maven signals when no higher-priority source exists', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-pom')
+    const projectRoot = fixturePath('interpolated-pom')
     const result = await resolveJdk({
       cwd: projectRoot,
       command: 'make test',
@@ -184,7 +187,7 @@ describe('resolveJdk', () => {
   })
 
   it('returns CONFLICT for interpolated Maven signals that resolve to different majors', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-conflict')
+    const projectRoot = fixturePath('interpolated-conflict')
     const result = await resolveJdk({
       cwd: projectRoot,
       command: 'make test',
@@ -224,7 +227,7 @@ describe('resolveJdk', () => {
   })
 
   it('keeps fail-soft NO_SIGNAL behavior for unresolved interpolated Maven references', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-unresolved-all')
+    const projectRoot = fixturePath('interpolated-unresolved-all')
     const result = await resolveJdk({
       cwd: projectRoot,
       command: 'make test',
@@ -253,7 +256,7 @@ describe('resolveJdk', () => {
   })
 
   it('keeps fail-soft NO_SIGNAL behavior for cyclic interpolated Maven references', async () => {
-    const projectRoot = path.resolve('packages/core/tests/fixtures/interpolated-cycle')
+    const projectRoot = fixturePath('interpolated-cycle')
     const result = await resolveJdk({
       cwd: projectRoot,
       command: 'make test',

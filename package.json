@@ -7,6 +7,11 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "pack:check": "npm run pack:check --workspaces --if-present",
+    "release:version-check": "node ./scripts/release-version-check.mjs",
+    "release:check": "npm run build && npm test && npm run release:version-check && npm run pack:check",
+    "release:publish": "node ./scripts/publish-workspaces.mjs",
+    "release:publish:dry-run": "node ./scripts/publish-workspaces.mjs --dry-run",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p packages/core/tsconfig.json --noEmit"
