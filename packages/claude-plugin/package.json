@@ -1,10 +1,10 @@
 {
-  "name": "@jdk-auto-switch/claude-plugin",
+  "name": "@w32191/jdk-auto-switch-claude-plugin",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@jdk-auto-switch/core": "0.1.0"
+    "@w32191/jdk-auto-switch-core": "0.1.0"
   },
   "scripts": {
     "test": "vitest run --config vitest.config.ts"

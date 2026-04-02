@@ -6,6 +6,7 @@ type RootPackageJson = {
 }
 
 type WorkspacePackageJson = {
+  name?: string
   version?: string
   dependencies?: Record<string, string>
 }
@@ -29,9 +30,12 @@ describe('workspace npm release workflow', () => {
     const opencodePkg = readJson<WorkspacePackageJson>('../../opencode-plugin/package.json')
     const claudePkg = readJson<WorkspacePackageJson>('../../claude-plugin/package.json')
 
+    expect(corePkg.name).toBe('@w32191/jdk-auto-switch-core')
+    expect(opencodePkg.name).toBe('@w32191/jdk-auto-switch-opencode-plugin')
+    expect(claudePkg.name).toBe('@w32191/jdk-auto-switch-claude-plugin')
     expect(opencodePkg.version).toBe(corePkg.version)
     expect(claudePkg.version).toBe(corePkg.version)
-    expect(opencodePkg.dependencies?.['@jdk-auto-switch/core']).toBe(corePkg.version)
-    expect(claudePkg.dependencies?.['@jdk-auto-switch/core']).toBe(corePkg.version)
+    expect(opencodePkg.dependencies?.['@w32191/jdk-auto-switch-core']).toBe(corePkg.version)
+    expect(claudePkg.dependencies?.['@w32191/jdk-auto-switch-core']).toBe(corePkg.version)
   })
 })

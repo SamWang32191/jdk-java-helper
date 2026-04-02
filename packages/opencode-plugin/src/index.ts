@@ -1,4 +1,4 @@
-import type { ResolveInput, ResolveResult } from '@jdk-auto-switch/core'
+import type { ResolveInput, ResolveResult } from '@w32191/jdk-auto-switch-core'
 import type { Hooks, Plugin, PluginModule } from '@opencode-ai/plugin'
 
 type OpenCodeHooks = Pick<Hooks, 'shell.env' | 'tool.execute.before'>
@@ -65,7 +65,7 @@ function wrapCommandWithResolvedEnv(command: string, env: Record<string, string>
 }
 
 async function defaultResolveJdk(input: ResolveInput): Promise<ResolveResult> {
-  const { resolveJdk } = await import('@jdk-auto-switch/core')
+  const { resolveJdk } = await import('@w32191/jdk-auto-switch-core')
   return resolveJdk(input)
 }
 

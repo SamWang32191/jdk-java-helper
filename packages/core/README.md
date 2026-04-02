@@ -1,11 +1,11 @@
-# @jdk-auto-switch/core
+# @w32191/jdk-auto-switch-core
 
 Core JDK resolution library and CLI for Maven-aware command execution.
 
 ## Install
 
 ```bash
-npm install @jdk-auto-switch/core
+npm install @w32191/jdk-auto-switch-core
 ```
 
 ## CLI usage
@@ -17,7 +17,7 @@ npx jdk-auto-switch explain --cwd /path/to/project --command "mvn test"
 ## Library usage
 
 ```ts
-import { resolveJdk } from '@jdk-auto-switch/core'
+import { resolveJdk } from '@w32191/jdk-auto-switch-core'
 
 const result = await resolveJdk({
   cwd: '/path/to/project',

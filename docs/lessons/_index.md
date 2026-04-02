@@ -4,5 +4,6 @@
 
 | Card | Scope | Tags | Date |
 |---|---|---|---|
+| `clean-worktrees-need-build-for-package-import-tests` | project | worktrees, testing, build, npm | 2026-04-02 |
 | `npm-pack-needs-package-local-license` | project | npm, publishing, packaging, license | 2026-04-02 |
 | `workspace-package-tests-need-local-vitest-config` | project | npm, workspaces, testing, vitest | 2026-04-02 |
