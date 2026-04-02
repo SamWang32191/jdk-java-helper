@@ -5,9 +5,9 @@ import path from 'node:path'
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
 const packageSpecs = [
-  { name: '@jdk-auto-switch/core', path: 'packages/core/package.json', publishable: true },
-  { name: '@jdk-auto-switch/opencode-plugin', path: 'packages/opencode-plugin/package.json', publishable: true },
-  { name: '@jdk-auto-switch/claude-plugin', path: 'packages/claude-plugin/package.json', publishable: false },
+  { name: '@w32191/jdk-auto-switch-core', path: 'packages/core/package.json', publishable: true },
+  { name: '@w32191/jdk-auto-switch-opencode-plugin', path: 'packages/opencode-plugin/package.json', publishable: true },
+  { name: '@w32191/jdk-auto-switch-claude-plugin', path: 'packages/claude-plugin/package.json', publishable: false },
 ]
 
 const readPackageJson = (relativePath) =>
@@ -23,20 +23,20 @@ if (versions.size !== 1) {
   throw new Error(`Workspace packages must stay in lockstep. Found versions: ${[...versions].join(', ')}`)
 }
 
-const coreVersion = packages.find((pkg) => pkg.name === '@jdk-auto-switch/core')?.manifest.version
+const coreVersion = packages.find((pkg) => pkg.name === '@w32191/jdk-auto-switch-core')?.manifest.version
 if (!coreVersion) {
-  throw new Error('Missing @jdk-auto-switch/core version')
+  throw new Error('Missing @w32191/jdk-auto-switch-core version')
 }
 
 for (const pkg of packages) {
-  if (pkg.name === '@jdk-auto-switch/core') {
+  if (pkg.name === '@w32191/jdk-auto-switch-core') {
     continue
   }
 
-  const declaredCoreVersion = pkg.manifest.dependencies?.['@jdk-auto-switch/core']
+  const declaredCoreVersion = pkg.manifest.dependencies?.['@w32191/jdk-auto-switch-core']
   if (declaredCoreVersion !== coreVersion) {
     throw new Error(
-      `${pkg.name} must depend on @jdk-auto-switch/core@${coreVersion}, found ${declaredCoreVersion ?? 'none'}`,
+      `${pkg.name} must depend on @w32191/jdk-auto-switch-core@${coreVersion}, found ${declaredCoreVersion ?? 'none'}`,
     )
   }
 }

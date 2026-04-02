@@ -4,9 +4,9 @@ Shared core plus OpenCode and Claude Code adapters for command-scoped JDK switch
 
 ## Packages
 
-- `@jdk-auto-switch/core` — public npm package for resolver logic, diagnostics, and CLI
-- `@jdk-auto-switch/opencode-plugin` — public npm package for the OpenCode adapter
-- `@jdk-auto-switch/claude-plugin` — internal package, gated from npm publication until its package contract is finished
+- `@w32191/jdk-auto-switch-core` — public npm package for resolver logic, diagnostics, and CLI
+- `@w32191/jdk-auto-switch-opencode-plugin` — public npm package for the OpenCode adapter
+- `@w32191/jdk-auto-switch-claude-plugin` — internal package, gated from npm publication until its package contract is finished
 
 ## npm release workflow
 
@@ -37,15 +37,15 @@ npm run release:publish
 
 Current public release set:
 
-- `@jdk-auto-switch/core`
-- `@jdk-auto-switch/opencode-plugin`
+- `@w32191/jdk-auto-switch-core`
+- `@w32191/jdk-auto-switch-opencode-plugin`
 
 ## OpenCode plugin usage
 
 Install the package:
 
 ```bash
-npm install @jdk-auto-switch/opencode-plugin
+npm install @w32191/jdk-auto-switch-opencode-plugin
 ```
 
 Add it to `opencode.json`:
@@ -53,7 +53,7 @@ Add it to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@jdk-auto-switch/opencode-plugin"]
+  "plugin": ["@w32191/jdk-auto-switch-opencode-plugin"]
 }
 ```
 

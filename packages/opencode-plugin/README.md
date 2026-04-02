@@ -1,11 +1,11 @@
-# @jdk-auto-switch/opencode-plugin
+# @w32191/jdk-auto-switch-opencode-plugin
 
 OpenCode plugin for command-scoped JDK switching in Maven projects.
 
 ## Install
 
 ```bash
-npm install @jdk-auto-switch/opencode-plugin
+npm install @w32191/jdk-auto-switch-opencode-plugin
 ```
 
 This package is intended for npm-native OpenCode plugin installation.
@@ -17,7 +17,7 @@ Add the package to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@jdk-auto-switch/opencode-plugin"]
+  "plugin": ["@w32191/jdk-auto-switch-opencode-plugin"]
 }
 ```
 
@@ -40,7 +40,7 @@ Run a command through OpenCode inside a Maven project that requires a specific J
 - If your OpenCode setup still needs an explicit entry-file export path, use this as an advanced fallback:
 
 ```ts
-import jdkAutoSwitch from '@jdk-auto-switch/opencode-plugin'
+import jdkAutoSwitch from '@w32191/jdk-auto-switch-opencode-plugin'
 
 export default jdkAutoSwitch
 ```

@@ -1,4 +1,4 @@
-import { resolveJdk as coreResolveJdk } from '@jdk-auto-switch/core'
+import { resolveJdk as coreResolveJdk } from '@w32191/jdk-auto-switch-core'
 
 function normalizeCommand(payload) {
   return payload?.tool_input?.command ?? payload?.command ?? ''

@@ -1,5 +1,5 @@
 {
-  "name": "@jdk-auto-switch/core",
+  "name": "@w32191/jdk-auto-switch-core",
   "version": "0.1.0",
   "description": "Core JDK resolution library and CLI for Maven-aware command execution.",
   "license": "MIT",

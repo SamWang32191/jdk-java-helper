@@ -2,11 +2,40 @@ import { readFileSync } from 'node:fs'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it, vi } from 'vitest'
-import type { ResolveResult } from '@jdk-auto-switch/core'
-import { runHook } from '../scripts/jdk-hook.mjs'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import type { ResolveResult } from '../../core/src/index.js'
+
+async function loadRunHook() {
+  return (await import('../scripts/jdk-hook.mjs')).runHook
+}
+
+const stubCoreDir = fileURLToPath(new URL('../node_modules/@w32191/jdk-auto-switch-core', import.meta.url))
+
+function ensureStubCore() {
+  mkdirSync(stubCoreDir, { recursive: true })
+  writeFileSync(
+    new URL('./package.json', new URL(`${stubCoreDir}/`, import.meta.url)),
+    JSON.stringify({ name: '@w32191/jdk-auto-switch-core', type: 'module', exports: { '.': './index.mjs' } }),
+  )
+  writeFileSync(
+    new URL('./index.mjs', new URL(`${stubCoreDir}/`, import.meta.url)),
+    'export async function resolveJdk() { return { kind: "unresolved", code: "NO_PROJECT", reasons: ["stub"], projectRoot: "/workspace", command: "mvn test", sourcesExamined: [], installedJdkMajors: [], suggestedNextAction: "stub" } }\n',
+  )
+}
+
+function cleanupStubCore() {
+  rmSync(new URL('../node_modules/@w32191', import.meta.url), { recursive: true, force: true })
+}
 
 describe('Claude hook', () => {
+  beforeAll(() => {
+    ensureStubCore()
+  })
+
+  afterAll(() => {
+    cleanupStubCore()
+  })
+
   it('uses a package-local vitest config so npm test works from the package directory', () => {
     const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
       scripts?: { test?: string }
@@ -53,6 +82,7 @@ describe('Claude hook', () => {
       },
     } satisfies Extract<ResolveResult, { kind: 'resolved' }>
 
+    const runHook = await loadRunHook()
     const result = await runHook(
       {
         event: 'PreToolUse',
@@ -69,6 +99,7 @@ describe('Claude hook', () => {
   })
 
   it('returns a clean no-op for NO_PROJECT', async () => {
+    const runHook = await loadRunHook()
     const result = await runHook(
       {
         event: 'PreToolUse',
@@ -93,6 +124,7 @@ describe('Claude hook', () => {
   })
 
   it('blocks unresolved non-NO_PROJECT results', async () => {
+    const runHook = await loadRunHook()
     const result = await runHook(
       {
         event: 'PreToolUse',
@@ -130,6 +162,7 @@ describe('Claude hook', () => {
       suggestedNextAction: 'Run inside a Maven project.',
     } satisfies Extract<ResolveResult, { kind: 'unresolved' }>))
 
+    const runHook = await loadRunHook()
     await runHook(
       {
         event: 'CwdChanged',
@@ -149,32 +182,16 @@ describe('Claude hook', () => {
 
   it('supports the stdin/stdout entrypoint path', () => {
     const scriptUrl = new URL('../scripts/jdk-hook.mjs', import.meta.url)
-    const stubCoreDir = fileURLToPath(new URL('../node_modules/@jdk-auto-switch/core', import.meta.url))
 
-    mkdirSync(stubCoreDir, { recursive: true })
-    writeFileSync(
-      new URL('./package.json', new URL(`${stubCoreDir}/`, import.meta.url)),
-      JSON.stringify({ name: '@jdk-auto-switch/core', type: 'module', exports: { '.': './index.mjs' } }),
-    )
-    writeFileSync(
-      new URL('./index.mjs', new URL(`${stubCoreDir}/`, import.meta.url)),
-      'export async function resolveJdk() { return { kind: "unresolved", code: "NO_PROJECT", reasons: ["stub"], projectRoot: "/workspace", command: "mvn test", sourcesExamined: [], installedJdkMajors: [], suggestedNextAction: "stub" } }\n',
-    )
-
-    const result = spawnSync(
-      process.execPath,
-      [scriptUrl.pathname],
-      {
-        input: JSON.stringify({
-          event: 'PreToolUse',
-          tool_name: 'Bash',
-          tool_input: { command: 'mvn test', cwd: '/workspace' },
-        }),
-        encoding: 'utf8',
-      },
-    )
-
-    rmSync(new URL('../node_modules/@jdk-auto-switch', import.meta.url), { recursive: true, force: true })
+    let result: ReturnType<typeof spawnSync>
+    result = spawnSync(process.execPath, [scriptUrl.pathname], {
+      input: JSON.stringify({
+        event: 'PreToolUse',
+        tool_name: 'Bash',
+        tool_input: { command: 'mvn test', cwd: '/workspace' },
+      }),
+      encoding: 'utf8',
+    })
 
     expect(result.status).toBe(0)
     expect(result.stdout).toBe('')

@@ -30,8 +30,12 @@ The system SHALL require publishable workspace packages to pass release validati
 The system SHALL define a coordinated multi-package npm release model for publishable workspace packages, including a documented versioning policy and a dependency-safe publish order for packages with internal workspace dependencies.
 
 #### Scenario: Core publishes before dependent adapter packages
-- **WHEN** a release includes `@jdk-auto-switch/core` and one or more packages that depend on it
-- **THEN** the release workflow publishes `@jdk-auto-switch/core` before publishing its dependent packages
+- **WHEN** a release includes `@w32191/jdk-auto-switch-core` and one or more packages that depend on it
+- **THEN** the release workflow publishes `@w32191/jdk-auto-switch-core` before publishing its dependent packages
+
+#### Scenario: OpenCode adapter publishes as a public package
+- **WHEN** the release workflow includes the OpenCode adapter package
+- **THEN** it treats `@w32191/jdk-auto-switch-opencode-plugin` as a public workspace package in the release set
 
 #### Scenario: Release version stays coherent across published workspace packages
 - **WHEN** maintainers prepare a coordinated workspace release

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it, vi } from 'vitest'
 import pluginModule, { createOpenCodePlugin, server } from '../src/index.js'
-import type { ResolveInput, ResolveResult } from '@jdk-auto-switch/core'
+import type { ResolveInput, ResolveResult } from '@w32191/jdk-auto-switch-core'
 
 const opencodePackageJsonUrl = new URL('../package.json', import.meta.url)
 
@@ -85,7 +85,12 @@ describe('OpenCode npm plugin contract', () => {
   it('declares package exports for OpenCode loader discovery', () => {
     const packageJson = JSON.parse(
       readFileSync(opencodePackageJsonUrl, 'utf8'),
-    ) as { exports?: { '.': { types?: string; default?: string } } }
+    ) as {
+      name?: string
+      exports?: { '.': { types?: string; default?: string } }
+    }
+
+    expect(packageJson.name).toBe('@w32191/jdk-auto-switch-opencode-plugin')
 
     expect(packageJson.exports?.['.'].types).toBe('./dist/index.d.ts')
     expect(packageJson.exports?.['.'].default).toBe('./dist/index.js')
