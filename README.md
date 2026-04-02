@@ -10,23 +10,30 @@ Shared core plus OpenCode and Claude Code adapters for command-scoped JDK switch
 
 ## OpenCode plugin usage
 
-Install the package in the OpenCode plugin project that will host it:
+Install the package:
 
 ```bash
 npm install @jdk-auto-switch/opencode-plugin
 ```
 
-Then export it from your OpenCode plugin entry:
+Add it to `opencode.json`:
 
-```ts
-import jdkAutoSwitch from '@jdk-auto-switch/opencode-plugin'
-
-export default jdkAutoSwitch
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["@jdk-auto-switch/opencode-plugin"]
+}
 ```
 
-The plugin uses `shell.env` to inject `JAVA_HOME` and `PATH` for Maven projects, and uses `tool.execute.before` to validate or rewrite Bash commands before execution.
+Verify the plugin loads:
 
-To verify the integration, run a Bash command inside a Maven project that requires a specific JDK and confirm the command sees the expected `JAVA_HOME`.
+```bash
+opencode --print-logs --log-level DEBUG session list --format json
+```
+
+Success means there is no plugin loader or target-discovery error in the logs, and Maven commands executed through OpenCode switch `JAVA_HOME` / `PATH` to the required JDK inside the project.
+
+> Note: the loader contract is sensitive to the OpenCode version; verify plugin loading against the target OpenCode release.
 
 ## Development
 

@@ -2,6 +2,9 @@
   "name": "@jdk-auto-switch/opencode-plugin",
   "version": "0.1.0",
   "type": "module",
+  "oc-plugin": [
+    "server"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -12,9 +15,10 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run tests"
   },
   "dependencies": {
-    "@jdk-auto-switch/core": "0.1.0"
+    "@jdk-auto-switch/core": "0.1.0",
+    "@opencode-ai/plugin": "1.3.13"
   }
 }

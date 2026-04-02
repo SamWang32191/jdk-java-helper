@@ -1,42 +1,14 @@
 import type { ResolveInput, ResolveResult } from '@jdk-auto-switch/core'
+import type { Hooks, Plugin, PluginModule } from '@opencode-ai/plugin'
 
-export interface OpenCodeShellEnvInput {
-  cwd: string
-  sessionID?: string
-  callID?: string
-}
-
-export interface OpenCodeShellEnvOutput {
-  env: Record<string, string>
-}
-
-export interface OpenCodeToolExecuteBeforeInput {
-  tool: string
-  sessionID: string
-  callID: string
-}
-
-export interface OpenCodeToolExecuteBeforeOutput {
-  args: unknown
-}
-
-export interface OpenCodeHooks {
-  'shell.env': (
-    input: OpenCodeShellEnvInput,
-    output: OpenCodeShellEnvOutput,
-  ) => Promise<void>
-  'tool.execute.before': (
-    input: OpenCodeToolExecuteBeforeInput,
-    output: OpenCodeToolExecuteBeforeOutput,
-  ) => Promise<void>
-}
+type OpenCodeHooks = Pick<Hooks, 'shell.env' | 'tool.execute.before'>
+type ShellEnvHook = NonNullable<Hooks['shell.env']>
+type ToolExecuteBeforeHook = NonNullable<Hooks['tool.execute.before']>
 
 export interface OpenCodePluginDependencies {
   resolveJdk?: (input: ResolveInput) => Promise<ResolveResult>
   env?: NodeJS.ProcessEnv
 }
-
-type OpenCodePluginOptions = Record<string, unknown>
 
 function createResolveInput(cwd: string, command: string, env: NodeJS.ProcessEnv): ResolveInput {
   return {
@@ -102,7 +74,7 @@ export function createOpenCodePlugin(dependencies: OpenCodePluginDependencies = 
   const runtimeEnv = dependencies.env ?? process.env
 
   return {
-    async 'shell.env'(input, output) {
+    async 'shell.env'(input: Parameters<ShellEnvHook>[0], output: Parameters<ShellEnvHook>[1]) {
       const result = await resolveJdk(createResolveInput(input.cwd, '', runtimeEnv))
 
       if (result.kind !== 'resolved') {
@@ -114,7 +86,10 @@ export function createOpenCodePlugin(dependencies: OpenCodePluginDependencies = 
         ...result.env,
       }
     },
-    async 'tool.execute.before'(input, output) {
+    async 'tool.execute.before'(
+      input: Parameters<ToolExecuteBeforeHook>[0],
+      output: Parameters<ToolExecuteBeforeHook>[1],
+    ) {
       if (input.tool !== 'bash') {
         return
       }
@@ -143,8 +118,10 @@ export function createOpenCodePlugin(dependencies: OpenCodePluginDependencies = 
   }
 }
 
-async function opencodePlugin(_input: unknown, _options?: OpenCodePluginOptions): Promise<OpenCodeHooks> {
-  return createOpenCodePlugin()
+export const server: Plugin = async (_input, _options) => createOpenCodePlugin()
+
+const pluginModule: PluginModule = {
+  server,
 }
 
-export default opencodePlugin
+export default pluginModule
